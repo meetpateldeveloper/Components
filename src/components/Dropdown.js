@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState,useEffect,useRef } from "react";
 import { GoChevronDown } from "react-icons/go";
 import Panel from "./Panel";
 
 function Dropdown({ options, onChange, value }) {
   const [ddToggle, setddToggle] = useState(false);
-
+  const ddEle = useRef();
   function clickHandler() {
     setddToggle(!ddToggle);
   }
@@ -12,6 +12,19 @@ function Dropdown({ options, onChange, value }) {
     onChange(key);
     clickHandler();
   }
+
+  useEffect(()=>{
+    const handler =(event)=>{
+        if(!ddEle.current){
+            return;
+        }
+
+        if(!ddEle.current.contains(event.target)){
+            setddToggle(false);
+        }
+    }
+    document.addEventListener('click',handler,true)
+  },[])
 
   const dropdownOptions = options.map((option) => {
     return (
@@ -26,7 +39,7 @@ function Dropdown({ options, onChange, value }) {
   });
 
   return (
-    <div className="w-48 relative">
+    <div ref={ddEle} className="w-48 relative">
       <Panel
         className="flex justify-between items-center cursor-pointer"
         onClick={clickHandler}
